@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core import validators
-
+from django.contrib.auth.models import User
 
 class CustomValidators():
     def validate_alphanumeric(value):
@@ -11,9 +11,15 @@ class CustomValidators():
         
         if not set(value) < set(valid_characters):
             raise ValidationError('You shoud use only alphanumeric characters', code='invalid')
+    
+    def validate_no_match_username(value):
+        if User.objects.filter(username = value).exists():
+            raise ValidationError('Username has been already taken', code='invalid')
+
+        
 
 class UserNameField(forms.CharField):
-    default_validators = [CustomValidators.validate_alphanumeric, validators.MaxLengthValidator, validators.MinLengthValidator]
+    default_validators = [CustomValidators.validate_alphanumeric, validators.MaxLengthValidator, validators.MinLengthValidator, CustomValidators.validate_no_match_username]
 
 class PassWordField(forms.CharField):
     default_validators = [CustomValidators.validate_alphanumeric, validators.MaxLengthValidator, validators.MinLengthValidator]
@@ -21,7 +27,6 @@ class PassWordField(forms.CharField):
 class SignUpForm(forms.Form):
     username = UserNameField(label="Username", max_length=32, min_length=6)
     password = PassWordField(label="Password", max_length=32, min_length=6, widget=forms.PasswordInput)
-    
     repeat_password = PassWordField(label="Repeat password", max_length=32, min_length=6, widget=forms.PasswordInput)
     
     def clean(self):

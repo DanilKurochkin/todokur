@@ -1,11 +1,14 @@
 {% extends 'todo/base.html' %}
 
 {% block content %}
-<h1>Sing Up</h1>
+<h1>Log in</h1>
 
 <form method="post">
+
 {% csrf_token %}
-{{ form.non_field_errors }}
+
+
+{{ error }}
 {{ form.as_p }}
 <button type="submit">Submit</button>
 </form>

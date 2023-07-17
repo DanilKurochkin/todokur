@@ -2,6 +2,8 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.core import validators
 from django.contrib.auth.models import User
+from django.forms import ModelForm
+from .models import Todo
 
 class CustomValidators():
     def validate_alphanumeric(value):
@@ -15,8 +17,6 @@ class CustomValidators():
     def validate_no_match_username(value):
         if User.objects.filter(username = value).exists():
             raise ValidationError('Username has been already taken', code='invalid')
-
-        
 
 class UserNameField(forms.CharField):
     default_validators = [CustomValidators.validate_alphanumeric, validators.MaxLengthValidator, validators.MinLengthValidator, CustomValidators.validate_no_match_username]
@@ -38,3 +38,8 @@ class SignUpForm(forms.Form):
             if password != repeat_password:
                 error = ValidationError('Passwords do not match')
                 self.add_error('repeat_password', error)
+
+class CreateTodoForm(ModelForm):
+    class Meta():
+        model = Todo
+        fields = ['title', 'memo', 'is_important']

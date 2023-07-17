@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm
+from .forms import SignUpForm, CreateTodoForm
+from .models import Todo
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
@@ -26,7 +27,7 @@ def signupuser(request):
     return render(request, 'todo/signupuser.html', {'form':form})
 
 def todocurrent(request):
-    return render(request, 'todo/home.html')
+    return render(request, 'todo/todocurrent.html')
 
 def logoutuser(request):
     if request.method == 'POST':
@@ -36,7 +37,6 @@ def logoutuser(request):
 def loginuser(request):
     if request.method == "POST":
         form = AuthenticationForm(request.POST)
-        form.is_valid()
         user = authenticate(request, username=request.POST['username'],
                             password=request.POST['password'])
         if user is None:
@@ -48,3 +48,14 @@ def loginuser(request):
     else: 
         form = AuthenticationForm()
     return render(request, 'todo/login.html', {'form':form})
+
+def create(request):
+    if request.method == 'POST':
+        form = CreateTodoForm(request.POST)
+        newtodo = form.save(commit=False)
+        newtodo.user = request.user
+        newtodo.save()
+        return redirect('todocurrent')
+    else:
+        form = CreateTodoForm()
+    return render(request, 'todo/todocreate.html', {'form':form })

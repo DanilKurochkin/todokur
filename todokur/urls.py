@@ -14,5 +14,8 @@ urlpatterns = [
     path('', views.redirecttohome, name='redirecthome'),
     path('current/', views.todocurrent, name='todocurrent'),
     path('home/', views.home, name='home'),
-    path('create/', views.create, name='todocreate')
+    path('create/', views.create, name='todocreate'),
+    path('completed/', views.todocompleted, name = 'todocompleted'),
+    path('todo/<int:todo_pk>', views.viewtodo, name = 'viewtodo')
 ]
+    

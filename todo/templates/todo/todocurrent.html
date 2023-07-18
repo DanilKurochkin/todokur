@@ -2,6 +2,24 @@
 
 {% block content %}
 
-Current
+{% for todo in todos %}
+    <ul>
+        <li>
+        <a href="{% url 'viewtodo' todo.id %}">
+        {% if todo.is_important %}
+            <b>{{todo.title}}
+            {% if todo.memo %}
+                - {{ todo.memo }}
+            {% endif %}</b>
+        {% else %}
+            {{todo.title}}
+            {% if todo.memo %}
+                - {{ todo.memo }}
+            {% endif %}
+        {% endif %}
+        </a>
+        </li>
+    </ul>
+{% endfor %}
 
 {% endblock %}
